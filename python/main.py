@@ -1,10 +1,12 @@
 from mysqlconnect import MysqlDatabase
-from api import fetch_currency_data
+from api import API
 from apscheduler.schedulers.blocking import BlockingScheduler
+
 
 def process():
     database = MysqlDatabase()
-    currency_data = fetch_currency_data(currencies=['bitcoin', 'ethereum'])
+    api = API()
+    currency_data = api.fetch_currency_data(currencies=['bitcoin', 'ethereum'])
     for row in currency_data:
             check = database.check_currency(row['id'])
             if check:
