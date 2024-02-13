@@ -1,5 +1,5 @@
 class ApiException(Exception):
-    def __init__(self, message: str = "Falha na API"):
+    def __init__(self, message: str = "API Fail"):
         self.message = message
 
         super().__init__(self.message)
@@ -7,4 +7,4 @@ class ApiException(Exception):
 class NotExceptedResponseException(ApiException):
 
     def __init__(self):
-        super().__init__(message="Código de resposta inesperado")
+        super().__init__(message="Unexpected response from server")

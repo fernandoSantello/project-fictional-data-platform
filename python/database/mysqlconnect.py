@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 import os
 import mysql.connector
 from datetime import datetime as dt
+from .exceptions.exceptions import DatabaseException, InsertException, SelectException
 
 load_dotenv()
 class MysqlDatabase:
@@ -26,13 +27,16 @@ class MysqlDatabase:
 
     def select_statment(self, table_name: str, condition: bool, clause: str = None) -> list:
             with MysqlDatabase() as (dbobject, cursor, now):
-                if condition:
-                    cursor.execute(f"SELECT * FROM {table_name} WHERE {clause}")
-                    rows = cursor.fetchall() 
-                else:
-                    cursor.execute(f"SELECT * FROM {table_name}")
-                    rows = cursor.fetchall()             
-                return rows
+                try:
+                    if condition:
+                        cursor.execute(f"SELECT * FROM {table_name} WHERE {clause}")
+                        rows = cursor.fetchall() 
+                    else:
+                        cursor.execute(f"SELECT * FROM {table_name}")
+                        rows = cursor.fetchall()             
+                    return rows
+                except:
+                    raise SelectException
     
 
     def insert_statment(self, table_name: str, column_values: dict) -> None:
@@ -42,7 +46,10 @@ class MysqlDatabase:
             column_names =  dbobject.get_column_names(table_name=table_name)
             sql = f'INSERT INTO {table_name} {column_names} VALUES ({placeholders})'
             sql = sql.replace('[', '(').replace(']', ')').replace("'", '')
-            cursor.execute(sql, list(column_values.values()))
+            try:
+                cursor.execute(sql, list(column_values.values()))
+            except:
+                raise InsertException
 
 
     def get_column_names(self, table_name: str) -> list:

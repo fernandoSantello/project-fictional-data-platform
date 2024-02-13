@@ -1,14 +1,17 @@
 from database.mysqlconnect import MysqlDatabase
+from database.exceptions.exceptions import DatabaseException, InsertException, SelectException
 from api.api import API
 from api.exceptions.exceptions import ApiException, NotExceptedResponseException
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 
 def main():
-    #TODO except na hora de criar database
-    database = MysqlDatabase()
+    try:
+        database = MysqlDatabase()
+    except Exception as e:
+        print(f'Could not connect to Database due to the following exception: {e}. Breaking this execution loop and waiting for the next.')
+        exit()
     api = API()
-    #TODO dá para fazer ele puxar essa lista de algum luga  r
     currencies = ['bitcoin', 'ethereum']
     for element in currencies:
         try:
@@ -21,8 +24,13 @@ def main():
                     'error': error.message
                 }
                 database.insert_statment(table_name='process_fail', column_values=values)
-            except Exception as e:
-                print(e)
+            except InsertException as error:
+                id_currency = database.get_id_currency(currency=element)
+                values = {
+                    'id_currency': id_currency,
+                    'error': error.message
+                }
+                database.insert_statment(table_name='process_fail', column_values=values)
             continue
         check = database.check_currency(currency_data['id'])
         if check:
@@ -31,14 +39,30 @@ def main():
                     'id_currency': id_currency,
                     'rate': currency_data['rateUsd']
             }
-            database.insert_statment(table_name='rate', column_values=values)
+            try:
+                database.insert_statment(table_name='rate', column_values=values)
+            except InsertException as error:
+                id_currency = database.get_id_currency(currency=element)
+                values = {
+                    'id_currency': id_currency,
+                    'error': error.message
+                }
+                database.insert_statment(table_name='process_fail', column_values=values)
         else:
-            values = {currency_data['id'],
-                        currency_data['symbol'],
-                        currency_data['currencySymbol'],
-                        currency_data['type']}
-            database.insert_statment(table_name='currency', column_values=values)
-
+            values = {'id_currency': currency_data['id'],
+                        'symbol': currency_data['symbol'],
+                        'currency_symbol': currency_data['currencySymbol'],
+                        'type': currency_data['type']
+                        }
+            try:
+                database.insert_statment(table_name='currency', column_values=values)
+            except InsertException as error:
+                id_currency = database.get_id_currency(currency=element)
+                values = {
+                    'id_currency': id_currency,
+                    'error': error.message
+                }
+                database.insert_statment(table_name='process_fail', column_values=values)
 
 if __name__ == '__main__':
     main()
