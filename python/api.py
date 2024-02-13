@@ -12,8 +12,4 @@ def fetch_currency_data(currencies: list):
         else:
             rows.append([currency, None, None, None, None])
     return rows
-            
-
-currency_data = fetch_currency_data(currencies=['bitcoin', 'ethereum'])
-
-print(currency_data)
+         

@@ -8,6 +8,7 @@ CREATE TABLE currency (
     symbol CHAR(5) NULL,
     currencySymbol CHAR(10) NULL,
     type VARCHAR(10) NOT NULL,
+    createdAt VARCHAR(50) NOT NULL,
     
     PRIMARY KEY(id)
 );
@@ -16,10 +17,11 @@ CREATE TABLE rate (
 	id INT NOT NULL AUTO_INCREMENT,
     id_currency INT NOT NULL,
     rateUSD float NULL,
-    timestamp timestamp NOT NULL,
+    timestamp VARCHAR(50) NOT NULL,
     
     PRIMARY KEY (id),
     FOREIGN KEY (id_currency) REFERENCES currency(id)
 		ON UPDATE CASCADE
         ON DELETE NO ACTION
 );
+
