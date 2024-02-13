@@ -1,11 +1,11 @@
 from database.mysqlconnect import MysqlDatabase
-from database.exceptions.exceptions import DatabaseException, InsertException, SelectException
+from database.exceptions.exceptions import InsertException
 from api.api import API
 from api.exceptions.exceptions import ApiException, NotExceptedResponseException
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 
-def main():
+def execution_process():
     try:
         database = MysqlDatabase()
     except Exception as e:
@@ -63,6 +63,11 @@ def main():
                     'error': error.message
                 }
                 database.insert_statment(table_name='process_fail', column_values=values)
+
+def main():
+    scheduler = BlockingScheduler()
+    scheduler.add_job(execution_process, 'interval', minutes=1)
+    scheduler.start()
 
 if __name__ == '__main__':
     main()
