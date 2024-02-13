@@ -25,9 +25,10 @@ CREATE TABLE rate (
         ON DELETE NO ACTION
 );
 
-CREATE TABLE process_error (
+CREATE TABLE process_fail (
 	id INT NOT NULL AUTO_INCREMENT,
     id_currency INT NOT NULL,
+    error VARCHAR(50) NOT NULL,
     timestamp VARCHAR(50) NOT NULL,
     
     PRIMARY KEY (id),

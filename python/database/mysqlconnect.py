@@ -42,7 +42,7 @@ class MysqlDatabase:
             column_names =  dbobject.get_column_names(table_name=table_name)
             sql = f'INSERT INTO {table_name} {column_names} VALUES ({placeholders})'
             sql = sql.replace('[', '(').replace(']', ')').replace("'", '')
-            cursor.execute(sql, (column_values['id_currency'], column_values['rate'], column_values['timestamp']))
+            cursor.execute(sql, list(column_values.values()))
 
 
     def get_column_names(self, table_name: str) -> list:
