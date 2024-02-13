@@ -25,3 +25,13 @@ CREATE TABLE rate (
         ON DELETE NO ACTION
 );
 
+CREATE TABLE process_error (
+	id INT NOT NULL AUTO_INCREMENT,
+    id_currency INT NOT NULL,
+    timestamp VARCHAR(50) NOT NULL,
+    
+    PRIMARY KEY (id),
+    FOREIGN KEY (id_currency) REFERENCES currency(id)
+		ON UPDATE CASCADE
+        ON DELETE NO ACTION
+);

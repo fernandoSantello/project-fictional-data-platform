@@ -35,14 +35,14 @@ class MysqlDatabase:
                 return rows
     
 
-    def insert_statment(self, table_name: str, column_values: list) -> None:
+    def insert_statment(self, table_name: str, column_values: dict) -> None:
         with MysqlDatabase() as (dbobject, cursor, now):
-            column_values.append(now)
+            column_values['timestamp'] = now
             placeholders = ','.join(['%s' for _ in range(len(column_values))])
-            column_names =  self.get_column_names(table_name=table_name)
+            column_names =  dbobject.get_column_names(table_name=table_name)
             sql = f'INSERT INTO {table_name} {column_names} VALUES ({placeholders})'
             sql = sql.replace('[', '(').replace(']', ')').replace("'", '')
-            cursor.execute(sql, column_values)
+            cursor.execute(sql, (column_values['id_currency'], column_values['rate'], column_values['timestamp']))
 
 
     def get_column_names(self, table_name: str) -> list:

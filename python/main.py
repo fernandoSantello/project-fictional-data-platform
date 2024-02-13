@@ -1,21 +1,35 @@
 from database.mysqlconnect import MysqlDatabase
 from api.api import API
+from api.exceptions.exceptions import ApiException, NotExceptedResponseException
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 
 def main():
+    #TODO except na hora de criar database
     database = MysqlDatabase()
     api = API()
-    currency_data = api.fetch_currency_data(currencies=['bitcoin', 'ethereum'])
-    for row in currency_data:
-            check = database.check_currency(row['id'])
+    #TODO dá para fazer ele puxar essa lista de algum lugar
+    currencies = ['bitcoin', 'ethereum']
+    try:
+        for element in currencies:
+            currency_data = api.fetch_currency_data(currency=element)
+            #TODO JÁ INSERIR NO BANCO DE DADOS
+            check = database.check_currency(currency_data['id'])
             if check:
-                id_currency = database.get_id_currency(currency=row.get('id'))
-                values = [id_currency, row.get('rateUsd')]
+                id_currency = database.get_id_currency(currency=currency_data['id'])
+                values = {
+                     'id_currency': id_currency,
+                     'rate': currency_data['rateUsd']
+                }
                 database.insert_statment(table_name='rate', column_values=values)
             else:
-                values = [row.get('id'), row.get('symbol'), row.get('currencySymbol'), row.get('type')]
+                values = {currency_data['id'],
+                          currency_data['symbol'],
+                          currency_data['currencySymbol'],
+                          currency_data['type']}
                 database.insert_statment(table_name='currency', column_values=values)
+    except (ApiException, NotExceptedResponseException):
+         currency_data = []
 
 
 if __name__ == '__main__':
