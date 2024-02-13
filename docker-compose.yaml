@@ -1,0 +1,23 @@
+version: "3.11"
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql-container
+    environment:
+      MYSQL_PASSWORD: ${DB_CURRENCY_DATA_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_CURRENCY_DATA_PASSWORD}
+    volumes:
+      - ./sql/currency_data_database.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "15300:3306"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin-container
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: ${DB_CURRENCY_DATA_USER_CONTAINER}
+      PMA_PASSWORD: ${DB_CURRENCY_DATA_PASSWORD}
+    ports:
+      - "8080:80"
