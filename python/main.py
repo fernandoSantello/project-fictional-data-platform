@@ -9,7 +9,7 @@ def execution_process():
     try:
         database = MysqlDatabase()
     except Exception as e:
-        print(f'Could not connect to Database due to the following exception: {e}. Breaking this execution loop and waiting for the next.')
+        print(f'Could not connect to Database due to the following exception: {e}.')
         exit()
     api = API()
     currencies = ['bitcoin', 'ethereum']
@@ -23,14 +23,14 @@ def execution_process():
                     'id_currency': id_currency,
                     'error': error.message
                 }
-                database.insert_statment(table_name='process_fail', column_values=values)
+                database.insert_statement(table_name='process_fail', column_values=values)
             except InsertException as error:
                 id_currency = database.get_id_currency(currency=element)
                 values = {
                     'id_currency': id_currency,
                     'error': error.message
                 }
-                database.insert_statment(table_name='process_fail', column_values=values)
+                database.insert_statement(table_name='process_fail', column_values=values)
             continue
         check = database.check_currency(currency_data['id'])
         if check:
@@ -40,14 +40,14 @@ def execution_process():
                     'rate': currency_data['rateUsd']
             }
             try:
-                database.insert_statment(table_name='rate', column_values=values)
+                database.insert_statement(table_name='rate', column_values=values)
             except InsertException as error:
                 id_currency = database.get_id_currency(currency=element)
                 values = {
                     'id_currency': id_currency,
                     'error': error.message
                 }
-                database.insert_statment(table_name='process_fail', column_values=values)
+                database.insert_statement(table_name='process_fail', column_values=values)
         else:
             values = {'id_currency': currency_data['id'],
                         'symbol': currency_data['symbol'],
@@ -55,14 +55,14 @@ def execution_process():
                         'type': currency_data['type']
                         }
             try:
-                database.insert_statment(table_name='currency', column_values=values)
+                database.insert_statement(table_name='currency', column_values=values)
             except InsertException as error:
                 id_currency = database.get_id_currency(currency=element)
                 values = {
                     'id_currency': id_currency,
                     'error': error.message
                 }
-                database.insert_statment(table_name='process_fail', column_values=values)
+                database.insert_statement(table_name='process_fail', column_values=values)
 
 def main():
     scheduler = BlockingScheduler()
