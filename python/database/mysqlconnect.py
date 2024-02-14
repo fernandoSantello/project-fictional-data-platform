@@ -7,7 +7,7 @@ from .exceptions.exceptions import DatabaseException, InsertException, SelectExc
 load_dotenv()
 class MysqlDatabase:
     def __init__(self):
-        self.conn = mysql.connector.connect(user=os.getenv('DB_CURRENCY_DATA_USER'), 
+        self.conn = mysql.connector.connect(user=os.getenv('DB_CURRENCY_DATA_USER_CONTAINER'), 
                                       password=os.getenv('DB_CURRENCY_DATA_PASSWORD'),
                                       host=os.getenv('DB_CURRENCY_DATA_HOST'),
                                       database=os.getenv('DB_CURRENCY_DATA_NAME'))

@@ -21,3 +21,11 @@ services:
       PMA_PASSWORD: ${DB_CURRENCY_DATA_PASSWORD}
     ports:
       - "8080:80"
+    depends_on:
+      - mysql
+
+  python_app:
+    build:
+      dockerfile: ./python/Dockerfile
+    depends_on:
+      - mysql
