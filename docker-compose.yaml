@@ -20,13 +20,53 @@ services:
       PMA_USER: ${DB_CURRENCY_DATA_USER_CONTAINER}
       PMA_PASSWORD: ${DB_CURRENCY_DATA_PASSWORD}
     ports:
-      - "8080:80"
+      - "15310:80"
     depends_on:
       - mysql
 
+  postgres-prod:
+    image: postgres:13
+    container_name: postgres-prod-container
+    environment:
+      POSTGRES_USER: ${POSTGRES_PROD_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PROD_PASSWORD}
+    ports:
+      - "15301:5432"
+    depends_on:
+      - postgres-staging
+
+  postgres-staging:
+    image: postgres:13
+    container_name: postgres-staging-container
+    environment:
+      POSTGRES_USER: ${POSTGRES_STAGING_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_STAGING_PASSWORD}
+    ports:
+      - "15302:5432"
+    volumes:
+      - ./sql/postgres_currency_data_staging.sql:/docker-entrypoint-initdb.d/prod-init.sql
+    depends_on:
+      - mysql
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin-container
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    ports:
+      - "15311:80"
+    depends_on:
+      - postgres-prod
+      - postgres-staging
+
   python_app:
+    container_name: python-currency-data-app
     build:
       dockerfile: ./python/Dockerfile
     depends_on:
       - mysql
       - phpmyadmin
+      - postgres-staging
+      - postgres-prod
+      - pgadmin
