@@ -8,7 +8,7 @@ services:
       MYSQL_PASSWORD: ${DB_CURRENCY_DATA_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${DB_CURRENCY_DATA_PASSWORD}
     volumes:
-      - ./sql/currency_data_database.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./sql/mysql_currency_data_database.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "15300:3306"
 
@@ -29,3 +29,4 @@ services:
       dockerfile: ./python/Dockerfile
     depends_on:
       - mysql
+      - phpmyadmin

@@ -7,9 +7,9 @@ class Controller:
     def __init__(self):
         load_dotenv()
         self.db = DB(conn_param={
-            'user': os.getenv('DB_CURRENCY_DATA_USER'),
+            'user': os.getenv('DB_CURRENCY_DATA_USER_CONTAINER'),
             'password': os.getenv('DB_CURRENCY_DATA_PASSWORD'),
-            'host': os.getenv('DB_CURRENCY_DATA_HOST_LOCAL'),
+            'host': os.getenv('DB_CURRENCY_DATA_HOST'),
             'database': os.getenv('DB_CURRENCY_DATA_NAME')
         })
         self.api = API(conn_param={
@@ -22,7 +22,10 @@ class Controller:
     def get_currency_info(self, currency: str) -> bool | dict:
         currency_data = self.api.get_rates(currency=currency)
         check = self.db.check_currency(currency_data['id'])
-        return True, currency_data if check else Exception
+        if check:
+            return True, currency_data
+        else:
+            return False, currency_data
     
 
     def insert_rate(self, currency_data: dict) -> None:
@@ -36,9 +39,9 @@ class Controller:
 
     def insert_currency(self, currency_data: dict) -> None:
         row_values = {
-            'id_currency': currency_data['id'],
+            'name': currency_data['id'],
             'symbol': currency_data['symbol'],
-            'currency_symbol': currency_data['currencySymbol'],
+            'currencySymbol': currency_data['currencySymbol'],
             'type': currency_data['type']
         }
         self.db.insert_currency(row_values=row_values)

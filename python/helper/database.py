@@ -32,5 +32,5 @@ class DB:
 
     def insert_rate(self, row_values: dict) -> None:
         with DBConnection(conn_param=self.conn_param) as (db_conn, now):
-            sql = ('INSERT INTO rate (id_currency, rateUSD, timestamp) VALUES (%s, %s, %s)', (row_values['id_currency'], row_values['rateUsd'], now))
+            sql = ('INSERT INTO rate (id_currency, rateUSD, timestamp) VALUES (%s, %s, %s)', (row_values['id_currency'], row_values['rateUsd'], now,))
             db_conn.insert_statement(sql=sql)
