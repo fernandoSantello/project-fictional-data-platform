@@ -14,3 +14,4 @@ class CoincapAPI:
             return data
         else: 
             print(response.status_code)
+            

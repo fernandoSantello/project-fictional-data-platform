@@ -23,8 +23,8 @@ class Controller:
             'database_type': 'postgres'
         })
         self.api = CoincapAPI(conn_param={
-            'url': os.getenv('API_URL'),
-            'api_key': os.getenv('API_KEY')
+            'url': os.getenv('COINCAP_API_URL'),
+            'api_key': os.getenv('COINCAP_API_KEY')
         })
         self.currencies = ['bitcoin', 'ethereum']
 
