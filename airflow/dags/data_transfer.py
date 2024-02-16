@@ -1,9 +1,7 @@
 from airflow import DAG
-from airflow.utils.dates import days_ago
-from airflow.providers.mysql.operators.mysql import MySqlOperator
-from airflow.operators.python import PythonOperator
 from datetime import timedelta
-import pandas as pd
+from airflow.utils.dates import days_ago
+from airflow.operators.python import PythonOperator
 from libs.python.controller.controller import Controller
 
 
@@ -14,23 +12,26 @@ default_args = {
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 1,
-    'retry_delay': timedelta(minutes=5),
+    'retry_delay': timedelta(minutes=1),
 }
 
+
 dag = DAG(
-    'mysql_to_postgres_staging',
+    'Currency Data Pipeline',
     default_args=default_args,
-    description='Tranfers data from MySQL Database "currency_data" to Postgres Database "currency_data".'
+    description='Ongoing',
+    schedule_interval=timedelta(seconds=30),
 )
 
 
-def process():
+def etl_currency_info():
     controller = Controller()
     controller.execution_process()
 
+
 testing = PythonOperator(
-    task_id='testing',
-    python_callable=process,
+    task_id='etl_currency_info',
+    python_callable=etl_currency_info,
     dag=dag,
 )
 
