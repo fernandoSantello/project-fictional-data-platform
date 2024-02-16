@@ -1,5 +1,6 @@
-from helper.api import API
-from helper.database import DB
+from libs.python.helper.api import API
+from libs.python.helper.database import DB
+from typing import Union
 from dotenv import load_dotenv
 import os
 
@@ -19,7 +20,7 @@ class Controller:
         self.currencies = ['bitcoin', 'ethereum']
 
     
-    def get_currency_info(self, currency: str) -> bool | dict:
+    def get_currency_info(self, currency: str) -> Union[bool, dict]:
         currency_data = self.api.get_rates(currency=currency)
         check = self.db.check_currency(currency_data['id'])
         if check:

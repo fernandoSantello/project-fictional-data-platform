@@ -1,5 +1,6 @@
 import mysql.connector
 from datetime import datetime as dt
+from typing import Union
 
 class DBConnection:
     def __init__(self, conn_param: dict):
@@ -39,7 +40,7 @@ class DBConnection:
         self.cursor.execute(sql[0], sql[1])
 
 
-    def select_statement(self, sql: tuple, fetch_single: bool) -> list | dict | None:
+    def select_statement(self, sql: tuple, fetch_single: bool) -> Union[list, bool, None]:
         self.cursor.execute(sql[0], sql[1])
         if fetch_single:
             row = self.cursor.fetchone()

@@ -1,4 +1,4 @@
-from services.database import DBConnection
+from libs.python.services.database import DBConnection
 
 class DB:
     def __init__(self, conn_param: dict):

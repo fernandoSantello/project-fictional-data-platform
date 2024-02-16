@@ -1,4 +1,4 @@
-from services.api import APIConnection
+from libs.python.services.api import APIConnection
 
 class API:
     def __init__(self, conn_param: dict):
