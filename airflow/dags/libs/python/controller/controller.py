@@ -1,4 +1,4 @@
-from libs.python.helper.api import API
+from libs.python.helper.coincap_api import CoincapAPI
 from libs.python.helper.mysql_db import DBMysql
 from libs.python.helper.postgres_db import DBPostgres
 from typing import Union
@@ -22,7 +22,7 @@ class Controller:
             'database': os.getenv('POSTGRES_PROD_DATABASE'),
             'database_type': 'postgres'
         })
-        self.api = API(conn_param={
+        self.api = CoincapAPI(conn_param={
             'url': os.getenv('API_URL'),
             'api_key': os.getenv('API_KEY')
         })

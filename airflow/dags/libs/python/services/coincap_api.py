@@ -1,7 +1,7 @@
 import requests
 from requests.models import Response
 
-class APIConnection:
+class CoincapConnection:
     def __init__(self, conn_param: dict):
         self.url = conn_param['url']
         self.api_key = conn_param['api_key']

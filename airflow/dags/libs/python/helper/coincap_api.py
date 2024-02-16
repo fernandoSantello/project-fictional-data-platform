@@ -1,9 +1,9 @@
-from libs.python.services.api import APIConnection
+from libs.python.services.coincap_api import CoincapConnection
 
-class API:
+class CoincapAPI:
     def __init__(self, conn_param: dict):
         self.conn_param = conn_param
-        self.conn_api = APIConnection(conn_param=conn_param)
+        self.conn_api = CoincapConnection(conn_param=conn_param)
 
     
     def get_rates(self, currency: str) -> dict:
