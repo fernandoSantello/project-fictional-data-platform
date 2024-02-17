@@ -1,11 +1,10 @@
 from libs.python.helper.coincap_api import CoincapAPI
 from libs.python.helper.mysql_db import DBMysql
-from libs.python.helper.postgres_db import DBPostgres
 from typing import Union
 from dotenv import load_dotenv
 import os
 
-class Controller:
+class DBMysqlOperator:
     def __init__(self):
         load_dotenv()
         self.db_mysql = DBMysql(conn_param={
@@ -15,14 +14,7 @@ class Controller:
             'database': os.getenv('MYSQL_PROD_DATABASE'),
             'database_type': 'mysql'
         })
-        self.db_postgres = DBPostgres(conn_param={
-            'user': os.getenv('POSTGRES_PROD_USER'),
-            'password': os.getenv('POSTGRES_PROD_PASSWORD'),
-            'host': os.getenv('POSTGRES_PROD_HOST'),
-            'database': os.getenv('POSTGRES_PROD_DATABASE'),
-            'database_type': 'postgres'
-        })
-        self.api = CoincapAPI(conn_param={
+        self.api_coincap = CoincapAPI(conn_param={
             'url': os.getenv('COINCAP_API_URL'),
             'api_key': os.getenv('COINCAP_API_KEY')
         })
@@ -30,12 +22,9 @@ class Controller:
 
     
     def get_currency_info(self, currency: str) -> Union[bool, dict]:
-        currency_data = self.api.get_rates(currency=currency)
+        currency_data = self.api_coincap.get_rates(currency=currency)
         check = self.db_mysql.check_currency(currency_data['id'])
-        if check:
-            return True, currency_data
-        else:
-            return False, currency_data
+        return (True, currency_data) if check else (False, currency_data)
     
 
     def insert_rate(self, currency_data: dict) -> None:
@@ -57,10 +46,7 @@ class Controller:
         self.db_mysql.insert_currency(row_values=row_values)
 
 
-    def execution_process(self) -> None:
+    def sync_currency_data(self) -> None:
         for element in self.currencies:
             curency_exists, currency_data = self.get_currency_info(element)
-            if curency_exists:
-                self.insert_rate(currency_data=currency_data)
-            else:
-                self.insert_currency(currency_data=currency_data)
+            self.insert_rate(currency_data) if curency_exists else self.insert_currency(currency_data)

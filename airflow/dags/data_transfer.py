@@ -2,7 +2,7 @@ from airflow import DAG
 from datetime import timedelta
 from airflow.utils.dates import days_ago
 from airflow.operators.python import PythonOperator
-from libs.python.controller.controller import Controller
+from libs.python.controller.mysql_db import DBMysqlOperator
 
 
 default_args = {
@@ -25,7 +25,7 @@ dag = DAG(
 
 
 def etl_currency_info():
-    controller = Controller()
+    controller = DBMysqlOperator()
     controller.execution_process()
 
 
