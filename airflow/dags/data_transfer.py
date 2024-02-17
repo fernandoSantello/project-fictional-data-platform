@@ -17,10 +17,10 @@ default_args = {
 
 
 dag = DAG(
-    'Currency Data Pipeline',
+    'Currency_Data_Pipeline',
     default_args=default_args,
     description='Ongoing',
-    schedule_interval=timedelta(seconds=30),
+    schedule_interval=timedelta(minutes=5),
 )
 
 
