@@ -34,3 +34,25 @@ class DBMysql:
         with DBConnection(conn_param=self.conn_param) as (db_conn, now):
             sql = ('INSERT INTO rate (id_currency, rateUSD, timestamp) VALUES (%s, %s, %s)', (row_values['id_currency'], row_values['rateUsd'], now,))
             db_conn.insert_statement(sql=sql)
+
+
+    def get_currency_table(self, postgres_last_id: int) -> list:
+        with DBConnection(conn_param=self.conn_param) as (db_conn, now):
+            sql = ('SELECT id, name, symbol, currencySymbol, type, createdAt FROM currency WHERE id > %s', (postgres_last_id,))
+            rows = db_conn.select_statement(sql=sql, fetch_single=False)
+            return rows
+    
+
+    def get_rate_table(self, postgres_last_id: int) -> list:
+        with DBConnection(conn_param=self.conn_param) as (db_conn, now):
+            sql = ('SELECT id, id_currency, rateUSD, timestamp FROM rate WHERE id > %s',(postgres_last_id,))
+            rows = db_conn.select_statement(sql=sql, fetch_single=False)
+            return rows
+
+
+    def get_process_fail_table(self, postgres_last_id: int) -> list:
+        with DBConnection(conn_param=self.conn_param) as (db_conn, now):
+            sql = ('SELECT id, id_currency, error, timestamp FROM process_fail WHERE id > %s', (postgres_last_id,))
+            rows = db_conn.select_statement(sql=sql, fetch_single=False)
+            return rows
+    

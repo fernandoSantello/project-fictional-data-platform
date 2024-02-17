@@ -27,3 +27,24 @@ class DBPostgres:
         with DBConnection(conn_param=self.conn_param) as (db_conn, now):
             sql = ('INSERT INTO rate (id, id_currency, rateUSD, rateBRL, rateEUR, timestamp) VALUES (%s, %s, %s, %s, %s, %s)', (row_values['id'], row_values['id_currency'], row_values['rateUsd'],row_values['rateBrl'], row_values['rateEur'], now,))
             db_conn.insert_statement(sql=sql)
+
+    
+    def get_lat_id_currency(self) -> int:
+        with DBConnection(conn_param=self.conn_param) as (db_conn, now):
+            sql = ('SELECT id FROM currency WHERE id = (SELECT MAX(id) FROM currency)',())
+            row = db_conn.select_statement(sql=sql, fetch_single=True)
+            return row['id']
+
+
+    def get_lat_id_rate(self) -> int:
+        with DBConnection(conn_param=self.conn_param) as (db_conn, now):
+            sql = ('SELECT id FROM rates WHERE id = (SELECT MAX(id) FROM rates)',())
+            row = db_conn.select_statement(sql=sql, fetch_single=True)
+            return row['id']
+        
+
+    def get_lat_id_process_fail(self) -> int:
+        with DBConnection(conn_param=self.conn_param) as (db_conn, now):
+            sql = ('SELECT id FROM process_fail WHERE id = (SELECT MAX(id) FROM process_fail)',())
+            row = db_conn.select_statement(sql=sql, fetch_single=True)
+            return row['id']
