@@ -1,8 +1,8 @@
-CREATE DATABASE currency_data_staging;
+CREATE DATABASE IF NOT EXISTS currency_data_staging;
 
 \c currency_data_staging;
 
-CREATE TABLE currency (
+CREATE TABLE IF NOT EXISTS currency (
 	id INT NOT NULL,
     name VARCHAR(20) NOT NULL,
     symbol CHAR(5) NULL,
@@ -13,7 +13,7 @@ CREATE TABLE currency (
     PRIMARY KEY(id)
 );
 
-CREATE TABLE rate (
+CREATE TABLE IF NOT EXISTS rate (
 	id INT NOT NULL,
     id_currency INT NOT NULL,
     rateUSD float NULL,
@@ -27,7 +27,7 @@ CREATE TABLE rate (
         ON DELETE NO ACTION
 );
 
-CREATE TABLE process_fail (
+CREATE TABLE IF NOT EXISTS process_fail (
 	id INT NOT NULL,
     id_currency INT NOT NULL,
     error VARCHAR(50) NOT NULL,

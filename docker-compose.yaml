@@ -207,6 +207,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PROD_PASSWORD}
     volumes:
       - ./sql/mysql_currency_data_database.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql-data:/var/lib/mysql
     ports:
       - "15300:3306"
 
@@ -243,6 +244,7 @@ services:
       - "15302:5432"
     volumes:
       - ./sql/postgres_currency_data_staging.sql:/docker-entrypoint-initdb.d/prod-init.sql
+        - postgres-staging-db-volume:/var/lib/postgresql/data
     depends_on:
       - mysql
 
@@ -260,3 +262,5 @@ services:
 
 volumes:
   postgres-db-volume:
+  mysql-data:
+  postgres-staging-db-volume:
