@@ -1,8 +1,8 @@
-from helper.coincap_api import CoincapAPI
-from helper.exchange_rate_api import ExchangeRateAPI
-from helper.mysql_db import DBMysql
-from helper.postgres_db import DBPostgres
-from helper.dataframe_operator import tuple_to_dataframe, create_multiplied_column, concatenate_dataframes
+from libs.python.helper.coincap_api import CoincapAPI
+from libs.python.helper.exchange_rate_api import ExchangeRateAPI
+from libs.python.helper.mysql_db import DBMysql
+from libs.python.helper.postgres_db import DBPostgres
+from libs.python.helper.data_operations import tuple_to_dataframe, create_multiplied_column, concatenate_dataframes
 from typing import Union
 from dotenv import load_dotenv
 import os
@@ -84,9 +84,20 @@ class Controller:
         return rows
 
 
-    def treat_data(self):
-        currency_table = tuple_to_dataframe(self.get_currency_mysql())
-        #rating_table = tuple_to_dataframe(self.get_rate_mysql())
-        #process_fail_table = tuple_to_dataframe(self.get_process_fail_mysql())
-        print(currency_table)
+    def create_rate_column(self, column_name: str, value: int):
+        rating_table = tuple_to_dataframe(self.get_rate_mysql())
+        rate_column = create_multiplied_column(dataframe=rating_table, new_column=column_name, multiplied_column='rateUSD', value=value)
+        return rate_column
+    
+
+    def concatenate_rate_column(self):
+        rates_data = self.api_exchangerate.get_rates()
+        brl_rate = self.api_exchangerate.filter_specific_rate(data=rates_data, currency='brl')
+        eur_rate = self.api_exchangerate.filter_specific_rate(data=rates_data, currency='eur')
+        ratebrl_column = self.create_rate_column(column_name='rateBRL', value=brl_rate)
+        rateeur_column = self.create_rate_column(column_name='rateEUR', value=eur_rate)
+        current_rate_table = tuple_to_dataframe(self.get_rate_mysql())
+        new_rate_table = concatenate_dataframes([current_rate_table, ratebrl_column, rateeur_column])
+        return new_rate_table
+
         

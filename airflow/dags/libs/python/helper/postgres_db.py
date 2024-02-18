@@ -38,7 +38,7 @@ class DBPostgres:
 
     def get_lat_id_rate(self) -> int:
         with DBConnection(conn_param=self.conn_param) as (db_conn, now):
-            sql = ('SELECT id FROM rates WHERE id = (SELECT MAX(id) FROM rates)',())
+            sql = ('SELECT id FROM rate WHERE id = (SELECT MAX(id) FROM rate)',())
             row = db_conn.select_statement(sql=sql, fetch_single=True)
             return row['id']
         
