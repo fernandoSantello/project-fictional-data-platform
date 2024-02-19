@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from decimal import Decimal, getcontext
+from decimal import Decimal
 
 
 def tuple_to_dataframe(data: tuple) -> pd.DataFrame:
@@ -8,24 +8,25 @@ def tuple_to_dataframe(data: tuple) -> pd.DataFrame:
     return data
 
 
-def create_multiplied_column(dataframe: pd.DataFrame, new_column: str, multiplied_column: str, value: float) -> pd.DataFrame:
+def create_multiplied_column(dataframe: pd.DataFrame, new_column: str, multiplied_column: str, value: Decimal) -> pd.DataFrame:
     df = pd.DataFrame()
-    df[new_column] = np.round(dataframe[multiplied_column] * value, 2)
+    df[new_column] = dataframe[multiplied_column] * Decimal(str(value))
     return df
 
 
-def concatenate_dataframes(dataframes: list) -> pd.DataFrame:
+def concatenate_dataframes(dataframes: list) -> dict:
     merged_df = dataframes[0]
     for element in dataframes[1:]: 
         merged_df = pd.concat([merged_df, element], axis=1)
     merged_df = merged_df[['id', 'id_currency', 'rateUSD', 'rateBRL', 'rateEUR', 'timestamp']]
-    final = merged_df.to_dict('records')
-    return final
+    dictionary = merged_df.to_dict('records')
+    return dictionary
 
 
 def filter_specific_rate(data: dict, currency: str) -> float:
     currency = currency.upper()
     dict_value = np.round(data[currency], 2)
+    dict_value = Decimal(str(dict_value))
     return dict_value
 
 

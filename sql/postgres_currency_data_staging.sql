@@ -16,9 +16,9 @@ CREATE TABLE currency (
 CREATE TABLE rate (
 	id INT NOT NULL,
     id_currency INT NOT NULL,
-    rateUSD float NULL,
-    rateBRL float NULL,
-    rateEUR float NULL,
+    rateUSD money NULL,
+    rateBRL money NULL,
+    rateEUR money NULL,
     timestamp VARCHAR(50) NOT NULL,
     
     PRIMARY KEY (id),

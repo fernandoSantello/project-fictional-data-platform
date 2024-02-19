@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS currency (
 CREATE TABLE IF NOT EXISTS rate (
 	id INT NOT NULL AUTO_INCREMENT,
     id_currency INT NOT NULL,
-    rateUSD float NULL,
+    rateUSD decimal(15, 2) NULL,
     timestamp VARCHAR(50) NOT NULL,
     
     PRIMARY KEY (id),

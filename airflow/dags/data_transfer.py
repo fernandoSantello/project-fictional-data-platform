@@ -39,7 +39,7 @@ def taskflow_api_etl():
     
 
     @task()
-    def load_data(step, tables):
+    def load_data(tables):
         controller = Controller()
         controller.insert_into_postgres(tables['insert_currency_table'], tables['insert_rate_table'], tables['insert_process_fail_table'])
 
