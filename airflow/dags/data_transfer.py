@@ -1,8 +1,7 @@
-from airflow import DAG
 from datetime import timedelta
 from airflow.utils.dates import days_ago
-from airflow.operators.python import PythonOperator
 from libs.python.controller.controller import Controller
+from airflow.decorators import dag, task
 
 
 default_args = {
@@ -12,27 +11,41 @@ default_args = {
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 1,
-    'retry_delay': timedelta(minutes=1),
+    'retry_delay': timedelta(minutes=30),
 }
 
 
-dag = DAG(
-    'Currency_Data_Pipeline',
-    default_args=default_args,
-    description='Ongoing',
-    schedule_interval=timedelta(minutes=5),
-)
+@dag(default_args=default_args, schedule_interval=None, start_date=days_ago(0))
+def taskflow_api_etl():
 
 
-def etl_currency_info():
-    controller = Controller()
-    controller.execution_process()
+    @task()
+    def extract_data():
+        controller = Controller()
+        controller.sync_currency_data()
+        return True
+    
+
+    @task()
+    def transform_data(step):
+        controller = Controller()
+        insert_currency_table, insert_rate_table, insert_process_fail_table = controller.gather_table_data()
+        tables = {
+            'insert_currency_table': insert_currency_table,
+            'insert_rate_table': insert_rate_table,
+            'insert_process_fail_table': insert_process_fail_table
+        }
+        return tables
+    
+
+    @task()
+    def load_data(step, tables):
+        controller = Controller()
+        controller.insert_into_postgres(tables['insert_currency_table'], tables['insert_rate_table'], tables['insert_process_fail_table'])
+
+    step_1 = extract_data()
+    tables = transform_data(step=step_1)
+    load_data(tables=tables)
 
 
-testing = PythonOperator(
-    task_id='etl_currency_info',
-    python_callable=etl_currency_info,
-    dag=dag,
-)
-
-testing
+etl_dag = taskflow_api_etl()

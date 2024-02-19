@@ -235,7 +235,7 @@ services:
       - postgres-staging
 
   postgres-staging:
-    image: postgres:13
+    image: postgres:16
     container_name: postgres-staging-container
     environment:
       POSTGRES_USER: ${POSTGRES_STAGING_USER}
@@ -244,7 +244,7 @@ services:
       - "15302:5432"
     volumes:
       - ./sql/postgres_currency_data_staging.sql:/docker-entrypoint-initdb.d/prod-init.sql
-        - postgres-staging-db-volume:/var/lib/postgresql/data
+      - postgres-staging-db-volume:/var/lib/postgresql/data
     depends_on:
       - mysql
 

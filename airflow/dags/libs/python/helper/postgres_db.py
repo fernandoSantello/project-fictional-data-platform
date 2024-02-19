@@ -25,7 +25,7 @@ class DBPostgres:
 
     def insert_rate(self, row_values: dict) -> None:
         with DBConnection(conn_param=self.conn_param) as (db_conn, now):
-            sql = ('INSERT INTO rate (id, id_currency, rateUSD, rateBRL, rateEUR, timestamp) VALUES (%s, %s, %s, %s, %s, %s)', (row_values['id'], row_values['id_currency'], row_values['rateUsd'],row_values['rateBrl'], row_values['rateEur'], now,))
+            sql = ('INSERT INTO rate (id, id_currency, rateUSD, rateBRL, rateEUR, timestamp) VALUES (%s, %s, %s, %s, %s, %s)', (row_values['id'], row_values['id_currency'], row_values['rateUSD'],row_values['rateBRL'], row_values['rateEUR'], now,))
             db_conn.insert_statement(sql=sql)
 
     

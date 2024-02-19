@@ -18,22 +18,42 @@ class DBMysql:
             return bool(row)
 
 
-    def insert_process_fail(self, row_values: dict) -> None:
+    def insert_process_fail_statement(self, row_values: dict) -> None:
         with DBConnection(conn_param=self.conn_param) as (db_conn, now):
             sql = ('INSERT INTO process_fail (id_currency, error, timestamp) VALUES (%s, %s, %s)', (row_values['id_currency'], row_values['error'], now,))
             db_conn.insert_statement(sql=sql)
 
 
-    def insert_currency(self, row_values: dict) -> None:
+    def insert_currency_statement(self, row_values: dict) -> None:
         with DBConnection(conn_param=self.conn_param) as (db_conn, now):
             sql = ('INSERT INTO currency (name, symbol, currencySymbol, type, createdAt) VALUES (%s, %s, %s, %s, %s)', (row_values['name'], row_values['symbol'], row_values['currencySymbol'], row_values['type'] , now,))
             db_conn.insert_statement(sql=sql)
 
 
-    def insert_rate(self, row_values: dict) -> None:
+    def insert_rate_statement(self, row_values: dict) -> None:
         with DBConnection(conn_param=self.conn_param) as (db_conn, now):
             sql = ('INSERT INTO rate (id_currency, rateUSD, timestamp) VALUES (%s, %s, %s)', (row_values['id_currency'], row_values['rateUsd'], now,))
             db_conn.insert_statement(sql=sql)
+
+    
+    def insert_rate(self, currency_data: dict) -> None:
+        id_currency = self.get_id_currency(currency=currency_data['id'])
+        row_values = {
+            'id_currency': id_currency,
+            'rateUsd': currency_data['rateUsd']
+        }
+        self.insert_rate_statement(row_values=row_values)
+
+    
+    def insert_currency(self, currency_data: dict) -> None:
+        row_values = {
+            'name': currency_data['id'],
+            'symbol': currency_data['symbol'],
+            'currencySymbol': currency_data['currencySymbol'],
+            'type': currency_data['type']
+        }
+        self.insert_currency_statement(row_values=row_values)
+
 
 
     def get_currency_table(self, postgres_last_id: int) -> list:
