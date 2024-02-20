@@ -1,9 +1,8 @@
 from libs.python.services.exchange_rate_api import ExchangeRateConnection
 
 class ExchangeRateAPI:
-    def __init__(self, conn_param: dict):
-        self.conn_param = conn_param
-        self.conn_api = ExchangeRateConnection(conn_param=conn_param)
+    def __init__(self, conn_api: ExchangeRateConnection):
+        self.conn_api = conn_api
 
     
     def get_rates(self) -> dict:
