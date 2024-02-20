@@ -15,7 +15,7 @@ default_args = {
 }
 
 
-@dag(default_args=default_args, schedule_interval=None, start_date=days_ago(0))
+@dag(default_args=default_args, schedule_interval='0,30 * * * *', start_date=days_ago(0))
 def taskflow_api_etl():
 
 
