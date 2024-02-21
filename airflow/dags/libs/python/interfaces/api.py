@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class InterfaceAPI(ABC):
+class API(ABC):
 
     @abstractmethod
     def get_request(self):

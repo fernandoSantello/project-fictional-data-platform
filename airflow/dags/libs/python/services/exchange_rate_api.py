@@ -1,8 +1,8 @@
 import requests
 from requests.models import Response
-from libs.python.interfaces.api import InterfaceAPI
+from libs.python.interfaces.api import API
 
-class ExchangeRateConnection(InterfaceAPI):
+class ExchangeRateConnection(API):
     def __init__(self, conn_param: dict):
         self.url = conn_param['url']
         self.api_key = conn_param['api_key']

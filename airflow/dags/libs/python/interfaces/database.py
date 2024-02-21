@@ -3,7 +3,7 @@ from typing import Union
 
 
 
-class InterfaceDatabase(ABC):
+class Database(ABC):
     
 
     @abstractmethod

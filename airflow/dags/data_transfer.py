@@ -46,7 +46,15 @@ api_coincap = CoincapAPI(conn_api=CoincapConnection(conn_param={
             }))
 
 
-controller = Controller(api_coincap=api_coincap, api_exchangerate=api_exchangerate, mysql_db=mysql_db, postgres_db=postgres_db)
+rds_postgres_db = DBPostgres(conn_db=PostgresDBConnection(conn_param={
+            'user': os.getenv('RDS_USARNAME'),
+            'password': os.getenv('RDS_PASSWORD'),
+            'host': os.getenv('RDS_ENDPOINT'),
+            'database': os.getenv('RDS_DATABASE')
+        }))
+
+
+controller = Controller(api_coincap=api_coincap, api_exchangerate=api_exchangerate, mysql_db=mysql_db, postgres_db=postgres_db, rds_postgres_db=rds_postgres_db)
 
 
 default_args = {

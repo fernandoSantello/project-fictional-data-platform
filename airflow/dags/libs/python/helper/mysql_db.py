@@ -26,13 +26,13 @@ class DBMysql:
 
     def insert_currency_statement(self, row_values: dict) -> None:
         with self.conn_db as (conn_db, now):
-            sql = ('INSERT INTO currency (name, symbol, currencySymbol, type, createdAt) VALUES (%s, %s, %s, %s, %s)', (row_values['name'], row_values['symbol'], row_values['currencySymbol'], row_values['type'] , now,))
+            sql = ('INSERT INTO currency (name, symbol, currencysymbol, type, createdAt) VALUES (%s, %s, %s, %s, %s)', (row_values['name'], row_values['symbol'], row_values['currencysymbol'], row_values['type'] , now,))
             conn_db.insert_statement(sql=sql)
 
 
     def insert_rate_statement(self, row_values: dict) -> None:
         with self.conn_db as (conn_db, now):
-            sql = ('INSERT INTO rate (id_currency, rateUSD, timestamp) VALUES (%s, %s, %s)', (row_values['id_currency'], row_values['rateUsd'], now,))
+            sql = ('INSERT INTO rate (id_currency, rateusd, timestamp) VALUES (%s, %s, %s)', (row_values['id_currency'], row_values['rateusd'], now,))
             conn_db.insert_statement(sql=sql)
 
     
@@ -40,7 +40,7 @@ class DBMysql:
         id_currency = self.get_id_currency(currency=currency_data['id'])
         row_values = {
             'id_currency': id_currency,
-            'rateUsd': currency_data['rateUsd']
+            'rateusd': currency_data['rateUsd']
         }
         self.insert_rate_statement(row_values=row_values)
 
@@ -49,7 +49,7 @@ class DBMysql:
         row_values = {
             'name': currency_data['id'],
             'symbol': currency_data['symbol'],
-            'currencySymbol': currency_data['currencySymbol'],
+            'currencySymbol': currency_data['currencysymbol'],
             'type': currency_data['type']
         }
         self.insert_currency_statement(row_values=row_values)
@@ -58,14 +58,14 @@ class DBMysql:
 
     def get_currency_table(self, postgres_last_id: int) -> list:
         with self.conn_db as (conn_db, now):
-            sql = ('SELECT id, name, symbol, currencySymbol, type, createdAt FROM currency WHERE id > %s', (postgres_last_id,))
+            sql = ('SELECT id, name, symbol, currencysymbol, type, createdAt FROM currency WHERE id > %s', (postgres_last_id,))
             rows = conn_db.select_statement(sql=sql, fetch_single=False)
             return rows
     
 
     def get_rate_table(self, postgres_last_id: int) -> list:
         with self.conn_db as (conn_db, now):
-            sql = ('SELECT id, id_currency, rateUSD, timestamp FROM rate WHERE id > %s',(postgres_last_id,))
+            sql = ('SELECT id, id_currency, rateusd, timestamp FROM rate WHERE id > %s',(postgres_last_id,))
             rows = conn_db.select_statement(sql=sql, fetch_single=False)
             return rows
 

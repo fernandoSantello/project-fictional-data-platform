@@ -18,7 +18,7 @@ def concatenate_dataframes(dataframes: list) -> dict:
     merged_df = dataframes[0]
     for element in dataframes[1:]: 
         merged_df = pd.concat([merged_df, element], axis=1)
-    merged_df = merged_df[['id', 'id_currency', 'rateUSD', 'rateBRL', 'rateEUR', 'timestamp']]
+    merged_df = merged_df[['id', 'id_currency', 'rateusd', 'ratebrl', 'rateeur', 'timestamp']]
     dictionary = merged_df.to_dict('records')
     return dictionary
 
@@ -32,5 +32,15 @@ def filter_specific_rate(data: dict, currency: str) -> float:
 
 def create_rate_column(new_column: str, value: int, rate_table_mysql: dict) -> pd.DataFrame:
     rating_table = tuple_to_dataframe(rate_table_mysql)
-    rate_column = create_multiplied_column(dataframe=rating_table, new_column=new_column, multiplied_column='rateUSD', value=value)
+    rate_column = create_multiplied_column(dataframe=rating_table, new_column=new_column, multiplied_column='rateusd', value=value)
     return rate_column
+
+
+def concatenate_dataframe(rates_data: dict, rate_table: list) -> dict:
+    brl_rate = filter_specific_rate(data=rates_data, currency='brl')
+    eur_rate = filter_specific_rate(data=rates_data, currency='eur')
+    ratebrl_column = create_rate_column(new_column='ratebrl', value=brl_rate, rate_table_mysql=rate_table)
+    rateeur_column = create_rate_column(new_column='rateeur', value=eur_rate, rate_table_mysql=rate_table)
+    current_rate_table = tuple_to_dataframe(rate_table)
+    new_rate_table = concatenate_dataframes([current_rate_table, ratebrl_column, rateeur_column])
+    return new_rate_table

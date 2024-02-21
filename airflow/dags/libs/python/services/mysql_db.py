@@ -1,9 +1,9 @@
 import mysql.connector
 from datetime import datetime as dt
 from typing import Union
-from libs.python.interfaces.database import InterfaceDatabase
+from libs.python.interfaces.database import Database
 
-class MysqlDBConnection(InterfaceDatabase):
+class MysqlDBConnection(Database):
     def __init__(self, conn_param: dict):
         self.user = conn_param['user']
         self.password = conn_param['password']
