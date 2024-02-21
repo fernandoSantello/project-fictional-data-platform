@@ -2,9 +2,9 @@ import psycopg2
 import psycopg2.extras
 from datetime import datetime as dt
 from typing import Union
-from libs.python.interfaces.database import InterfaceDatabase
+from libs.python.interfaces.database import Database
 
-class PostgresDBConnection(InterfaceDatabase):
+class PostgresDBConnection(Database):
     def __init__(self, conn_param: dict):
         self.user = conn_param['user']
         self.password = conn_param['password']
@@ -15,12 +15,21 @@ class PostgresDBConnection(InterfaceDatabase):
 
 
     def __enter__(self):
-        self.conn = psycopg2.connect(
-        user=self.user,
-        password=self.password,
-        host=self.host,
-        dbname=self.database
-        )
+        if self.host == '127.0.0.1':
+            self.conn = psycopg2.connect(
+            user=self.user,
+            password=self.password,
+            host=self.host,
+            port='15302',
+            dbname=self.database
+            )
+        else:
+            self.conn = psycopg2.connect(
+            user=self.user,
+            password=self.password,
+            host=self.host,
+            dbname=self.database
+            )
         self.cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         now = dt.now().strftime('%Y-%m-%d %H:%M:%S')      
         return self, now

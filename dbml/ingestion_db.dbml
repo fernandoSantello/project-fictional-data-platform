@@ -1,0 +1,37 @@
+Project ingestion_currency_data {
+  database_type: 'MySQL'
+  Note: '''
+    # Ingestion Database
+    This database acts as a central repository for capturing raw data sourced from an API designed to fetch currency and rating information.
+  '''
+}
+
+Table ingestion_db.currency {
+  "id" INT [pk, not null, increment, note: 'Unique identifier for currency']
+  "name" VARCHAR(20) [not null, note: 'Most common name used to identify currency or fiat']
+  "symbol" CHAR(5) [note: 'Most common symbol used to identify currency or fiat']
+  "currencySymbol" CHAR(10) [note: 'Currency symbol used to identify currency or fiat']
+  "type" VARCHAR(10) [not null, note: 'Type of currency - fiat or crypto']
+  "createdAt" VARCHAR(50) [not null, note: 'The timestamp indicating when the currency entry was added to the database']
+  Note: 'Stores currency data in a determined point in time'
+}
+
+Table ingestion_db.rate {
+  "id" INT [pk, not null, increment, note: 'Unique identifier for rate']
+  "id_currency" INT [not null, note: 'Unique identifier for currency']
+  "rateUSD" decimal(15,2) [note: 'Rate conversion to USD (1 unit)']
+  "timestamp" VARCHAR(50) [not null, note: 'The timestamp indicating when the rate entry was added to the database']
+  Note: 'Stores rate data in a determined point in time'
+}
+
+Table ingestion_db.process_fail {
+  "id" INT [pk, not null, increment, note: 'Unique identifier for failed process']
+  "id_currency" INT [not null, note: 'Unique identifier for currency']
+  "error" VARCHAR(50) [not null, note: 'Error description']
+  "timestamp" VARCHAR(50) [not null, note: 'The timestamp indicating when the error entry was added to the database']
+  Note: 'Stores failed processes data'
+}
+
+Ref:ingestion_db.currency."id" < ingestion_db.rate."id_currency" [update: cascade, delete: no action]
+
+Ref:ingestion_db.currency."id" < ingestion_db.process_fail."id_currency" [update: cascade, delete: no action]

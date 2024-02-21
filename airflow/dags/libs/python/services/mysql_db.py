@@ -17,6 +17,7 @@ class MysqlDBConnection(Database):
         self.conn = mysql.connector.connect(user=self.user, 
                                     password=self.password,
                                     host=self.host,
+                                    port='15300',
                                     database=self.database)
         self.cursor = self.conn.cursor(dictionary=True)
         now = dt.now().strftime('%Y-%m-%d %H:%M:%S')      

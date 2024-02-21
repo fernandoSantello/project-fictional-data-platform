@@ -55,7 +55,6 @@ class DBMysql:
         self.insert_currency_statement(row_values=row_values)
 
 
-
     def get_currency_table(self, postgres_last_id: int) -> list:
         with self.conn_db as (conn_db, now):
             sql = ('SELECT id, name, symbol, currencysymbol, type, createdAt FROM currency WHERE id > %s', (postgres_last_id,))

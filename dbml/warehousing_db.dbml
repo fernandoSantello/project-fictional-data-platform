@@ -1,0 +1,52 @@
+Project warehouse_currency_data {
+  database_type: 'PostgresSQL'
+  Note: '''
+    # Warehousing Database
+    This database acts as a central repository for treated data sourced from another database. The data is fetched, treated and then loaded here. There are two instances of this database, one local and another on AWS.
+  '''
+
+}
+
+Table warehouse_db.currency {
+  "id" INT [not null, note: 'Unique identifier for currency']
+  "name" VARCHAR(20) [not null, note: 'Most common name used to identify currency or fiat']
+  "symbol" "CHAR (5)" [note: 'Most common symbol used to identify currency or fiat']
+  "currencySymbol" "CHAR (10)" [note: 'Currency symbol used to identify currency or fiat']
+  "type" VARCHAR(10) [not null, note: 'Type of currency - fiat or crypto']
+  "createdAt" VARCHAR(50) [not null, note: 'The timestamp indicating when the currency entry was added to the database']
+
+Indexes {
+  id [pk]
+}
+  Note: 'Stores currency data in a determined point in time'
+}
+
+Table warehouse_db.rate {
+  "id" INT [not null, note: 'Unique identifier for rate']
+  "id_currency" INT [not null, note: 'Unique identifier for currency']
+  "rateUSD" money [note: 'Rate conversion to USD (1 unit)']
+  "rateBRL" money [note: 'Rate conversion to BRL (1 unit)']
+  "rateEUR" money [note: 'Rate conversion to EUR (1 unit)']
+  "timestamp" VARCHAR(50) [not null, note: 'The timestamp indicating when the rate entry was added to the database']
+
+Indexes {
+  id [pk]
+}
+  Note: 'Stores rate data in a determined point in time'
+}
+
+Table warehouse_db.process_fail {
+  "id" INT [not null, note: 'Unique identifier for failed process']
+  "id_currency" INT [not null, note: 'Unique identifier for currency']
+  "error" VARCHAR(50) [not null, note: 'Error description']
+  "timestamp" VARCHAR(50) [not null, note: 'The timestamp indicating when the error entry was added to the database']
+
+Indexes {
+  id [pk]
+}
+  Note: 'Stores failed processes data'
+}
+
+Ref:warehouse_db.currency."id" < warehouse_db.rate."id_currency" [update: cascade, delete: no action]
+
+Ref:warehouse_db.currency."id" < warehouse_db.process_fail."id_currency" [update: cascade, delete: no action]
