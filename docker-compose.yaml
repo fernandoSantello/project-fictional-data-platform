@@ -224,17 +224,6 @@ services:
     depends_on:
       - mysql
 
-  postgres-prod:
-    image: postgres:13
-    container_name: postgres-prod-container
-    environment:
-      POSTGRES_USER: ${POSTGRES_PROD_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PROD_PASSWORD}
-    ports:
-      - "15301:5432"
-    depends_on:
-      - postgres-staging
-
   postgres-staging:
     image: postgres:16
     container_name: postgres-staging-container
