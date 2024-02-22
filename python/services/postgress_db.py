@@ -3,6 +3,8 @@ import psycopg2.extras
 from datetime import datetime as dt
 from typing import Union
 from python.interfaces.database import Database
+from python.exceptions.database import DatabaseException, StatementException
+from psycopg2.errors import ProgrammingError, DatabaseError
 
 class PostgresDBConnection(Database):
     def __init__(self, conn_param: dict):
@@ -30,6 +32,10 @@ class PostgresDBConnection(Database):
         self.conn.commit()
         self.cursor.close()
         self.conn.close()
+        if type(exc_value) == ProgrammingError:
+            raise StatementException
+        if type(exc_value) == DatabaseError:
+            raise DatabaseException
         
     
     def insert_statement(self, sql: tuple) -> None:

@@ -1,5 +1,6 @@
 import python.helper.data_operations as data_operations
 from python.exceptions.api import APIException, UnexpectedStatusCodeException
+from python.exceptions.database import DatabaseException, StatementException
 
 
 class Controller:
@@ -53,26 +54,34 @@ class Controller:
                 }
                 self.source_database.insert_process_fail(data)
                 return
-            curency_exists = self.source_database.check_currency(currency_data['id'])
-            if not curency_exists:
-                self.source_database.insert_currency(currency_data)
-            self.source_database.insert_rate(currency_data)
+            try:
+                curency_exists = self.source_database.check_currency(currency_data['id'])
+                if not curency_exists:
+                    self.source_database.insert_currency(currency_data)
+                self.source_database.insert_rate(currency_data)
+            except (DatabaseException, StatementException):
+                return
 
 
     def gather_table_data(self, treat_data: bool) -> dict:
-        insert_currency_table = self.get_currency()
-        if treat_data:
-            insert_rate_table = self.concatenate_rate_column()
-        else:
-            insert_rate_table = self.get_rate()
-        insert_process_fail_table = self.get_process_fail()
-        return insert_currency_table, insert_rate_table, insert_process_fail_table
-    
+        try:
+            insert_currency_table = self.get_currency()
+            if treat_data:
+                insert_rate_table = self.concatenate_rate_column()
+            else:
+                insert_rate_table = self.get_rate()
+            insert_process_fail_table = self.get_process_fail()
+            return insert_currency_table, insert_rate_table, insert_process_fail_table
+        except (DatabaseException, StatementException):
+            return
 
     def insert_into_target_database(self, insert_currency_table: dict, insert_rate_table: dict, insert_process_fail_table: dict ) -> None:
-        for element in insert_currency_table:
-            self.target_database.insert_currency(row_values=element)
-        for element in insert_rate_table:
-            self.target_database.insert_rate(row_values=element)
-        for element in insert_process_fail_table:
-            self.target_database.insert_process_fail(row_values=element)
+        try:
+            for element in insert_currency_table:
+                self.target_database.insert_currency(row_values=element)
+            for element in insert_rate_table:
+                self.target_database.insert_rate(row_values=element)
+            for element in insert_process_fail_table:
+                self.target_database.insert_process_fail(row_values=element)
+        except (DatabaseException, StatementException):
+            return
