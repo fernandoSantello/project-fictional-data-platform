@@ -54,9 +54,9 @@ rds_postgres_db = DBPostgres(conn_db=PostgresDBConnection(conn_param={
         }))
 
 
-controller_1 = Controller(api_rate=api_coincap, api_exchange_rate=api_exchangerate, source_database=mysql_db, target_database=postgres_db)
+controler_local = Controller(api_rate=api_coincap, api_exchange_rate=api_exchangerate, source_database=mysql_db, target_database=postgres_db)
 
-controller_2 = Controller(api_rate=api_coincap, api_exchange_rate=api_exchangerate, source_database=postgres_db, target_database=rds_postgres_db)
+controler_cloud = Controller(api_rate=api_coincap, api_exchange_rate=api_exchangerate, source_database=postgres_db, target_database=rds_postgres_db)
 
 
 default_args = {
@@ -75,14 +75,13 @@ def currency_data_pipeline():
 
 
     @task()
-    def extract_data():
-        controller_1.sync_currency_data()
-        return True
+    def extract_data_from_api():
+        controler_local.sync_currency_data()
     
 
     @task()
-    def gather_data_for_local(step):
-        insert_currency_table, insert_rate_table, insert_process_fail_table = controller_1.gather_table_data(treat_data=True)
+    def gather_data_for_local():
+        insert_currency_table, insert_rate_table, insert_process_fail_table = controler_local.gather_table_data(treat_data=True)
         tables = {
             'insert_currency_table': insert_currency_table,
             'insert_rate_table': insert_rate_table,
@@ -93,13 +92,12 @@ def currency_data_pipeline():
 
     @task()
     def load_data_to_local(tables):
-        controller_1.insert_into_target_database(tables['insert_currency_table'], tables['insert_rate_table'], tables['insert_process_fail_table'])
-        return True
+        controler_local.insert_into_target_database(tables['insert_currency_table'], tables['insert_rate_table'], tables['insert_process_fail_table'])
 
 
     @task()
-    def gather_data_for_cloud(step):
-        insert_currency_table, insert_rate_table, insert_process_fail_table = controller_2.gather_table_data(treat_data=False)
+    def gather_data_for_cloud():
+        insert_currency_table, insert_rate_table, insert_process_fail_table = controler_cloud.gather_table_data(treat_data=False)
         tables = {
             'insert_currency_table': insert_currency_table,
             'insert_rate_table': insert_rate_table,
@@ -110,14 +108,16 @@ def currency_data_pipeline():
     
     @task()
     def load_data_to_cloud(tables):
-        controller_2.insert_into_target_database(tables['insert_currency_table'], tables['insert_rate_table'], tables['insert_process_fail_table'])
+        controler_cloud.insert_into_target_database(tables['insert_currency_table'], tables['insert_rate_table'], tables['insert_process_fail_table'])
 
+    
+    A = extract_data_from_api()
+    B = gather_data_for_local()
+    C = load_data_to_local(B)
+    D = gather_data_for_cloud()
+    E = load_data_to_cloud(D)
 
-    step_1 = extract_data()
-    tables = gather_data_for_local(step=step_1)
-    step_2 = load_data_to_local(tables=tables)
-    tables = gather_data_for_cloud(step=step_2)
-    load_data_to_cloud(tables)
+    A >> B >> C >> D >> E
 
-
+    
 currency_data_pipeline = currency_data_pipeline()
