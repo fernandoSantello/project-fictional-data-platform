@@ -13,7 +13,7 @@ class DBPostgres:
 
     def insert_process_fail(self, row_values: dict) -> None:
         with self.conn_db as (conn_db, now):
-            sql = ('INSERT INTO process_fail (id, currency_name, error, timestamp) VALUES (%s, %s, %s, %s)', (row_values['id'], row_values['id_currency'], row_values['error'], now,))
+            sql = ('INSERT INTO process_fail (id, error, timestamp) VALUES (%s, %s, %s)', (row_values['id'], row_values['error'], now,))
             conn_db.insert_statement(sql=sql)
 
 

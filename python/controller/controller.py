@@ -42,7 +42,6 @@ class Controller:
                 currency_data = self.api_rate.get_rates(currency=element)
             except (APIException, UnexpectedStatusCodeException) as ex:
                 data = {
-                    'name': element,
                     'error': ex.message
                 }
                 self.source_database.insert_process_fail(data)
