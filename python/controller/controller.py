@@ -57,8 +57,8 @@ class Controller:
             try:
                 curency_exists = self.source_database.check_currency(currency=currency_data['id'])
                 if not curency_exists:
-                    self.source_database.insert_currency(row_values=currency_data)
-                self.source_database.insert_rate(row_values=currency_data)
+                    self.source_database.insert_currency(currency_data=currency_data)
+                self.source_database.insert_rate(currency_data=currency_data)
             except (DatabaseException, StatementException):
                 return
 
