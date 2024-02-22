@@ -26,12 +26,9 @@ Table ingestion_db.rate {
 
 Table ingestion_db.process_fail {
   "id" INT [pk, not null, increment, note: 'Unique identifier for failed process']
-  "id_currency" INT [not null, note: 'Unique identifier for currency']
   "error" VARCHAR(50) [not null, note: 'Error description']
   "timestamp" VARCHAR(50) [not null, note: 'The timestamp indicating when the error entry was added to the database']
   Note: 'Stores failed processes data'
 }
 
 Ref:ingestion_db.currency."id" < ingestion_db.rate."id_currency" [update: cascade, delete: no action]
-
-Ref:ingestion_db.currency."id" < ingestion_db.process_fail."id_currency" [update: cascade, delete: no action]

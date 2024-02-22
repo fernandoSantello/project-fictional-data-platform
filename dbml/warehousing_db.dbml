@@ -37,7 +37,6 @@ Indexes {
 
 Table warehouse_db.process_fail {
   "id" INT [not null, note: 'Unique identifier for failed process']
-  "id_currency" INT [not null, note: 'Unique identifier for currency']
   "error" VARCHAR(50) [not null, note: 'Error description']
   "timestamp" VARCHAR(50) [not null, note: 'The timestamp indicating when the error entry was added to the database']
 
@@ -48,5 +47,3 @@ Indexes {
 }
 
 Ref:warehouse_db.currency."id" < warehouse_db.rate."id_currency" [update: cascade, delete: no action]
-
-Ref:warehouse_db.currency."id" < warehouse_db.process_fail."id_currency" [update: cascade, delete: no action]
