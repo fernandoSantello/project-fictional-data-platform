@@ -49,7 +49,7 @@ class DBMysql:
         row_values = {
             'name': currency_data['id'],
             'symbol': currency_data['symbol'],
-            'currencySymbol': currency_data['currencysymbol'],
+            'currencysymbol': currency_data['currencySymbol'],
             'type': currency_data['type']
         }
         self.insert_currency_statement(row_values=row_values)

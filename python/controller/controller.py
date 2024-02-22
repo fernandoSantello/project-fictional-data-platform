@@ -38,7 +38,9 @@ class Controller:
         for element in self.currencies:
             currency_data = self.api_rate.get_rates(currency=element)
             curency_exists = self.source_database.check_currency(currency_data['id'])
-            self.source_database.insert_rate(currency_data) if curency_exists else self.source_database.insert_currency(currency_data)
+            if not curency_exists:
+                self.source_database.insert_currency(currency_data)
+            self.source_database.insert_rate(currency_data)
 
 
     def gather_table_data(self, treat_data: bool) -> dict:
