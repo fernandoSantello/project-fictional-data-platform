@@ -33,21 +33,21 @@ class DBPostgres:
         with self.conn_db as (conn_db, now):
             sql = ('SELECT id FROM currency WHERE id = (SELECT MAX(id) FROM currency)',())
             row = conn_db.select_statement(sql=sql, fetch_single=True)
-            return row['id']
+            return 0 if row == [] else row['id']
 
 
     def get_last_id_rate(self) -> int:
         with self.conn_db as (conn_db, now):
             sql = ('SELECT id FROM rate WHERE id = (SELECT MAX(id) FROM rate)',())
             row = conn_db.select_statement(sql=sql, fetch_single=True)
-            return row['id']
+            return 0 if row == [] else row['id']
         
 
     def get_last_id_process_fail(self) -> int:
         with self.conn_db as (conn_db, now):
             sql = ('SELECT id FROM process_fail WHERE id = (SELECT MAX(id) FROM process_fail)',())
             row = conn_db.select_statement(sql=sql, fetch_single=True)
-            return row['id']
+            return 0 if row == [] else row['id']
         
     
     def get_currency_table(self, postgres_last_id: int) -> list:
