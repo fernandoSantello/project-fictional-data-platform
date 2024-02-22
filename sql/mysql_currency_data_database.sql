@@ -27,12 +27,9 @@ CREATE TABLE IF NOT EXISTS rate (
 
 CREATE TABLE IF NOT EXISTS process_fail (
 	id INT NOT NULL AUTO_INCREMENT,
-    id_currency INT NOT NULL,
+    currency_name VARCHAR(20) NOT NULL,
     error VARCHAR(50) NOT NULL,
     timestamp VARCHAR(50) NOT NULL,
     
-    PRIMARY KEY (id),
-    FOREIGN KEY (id_currency) REFERENCES currency(id)
-		ON UPDATE CASCADE
-        ON DELETE NO ACTION
+    PRIMARY KEY (id)
 );
