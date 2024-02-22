@@ -59,4 +59,4 @@ class Controller:
         for element in insert_rate_table:
             self.target_database.insert_rate(row_values=element)
         for element in insert_process_fail_table:
-            self.target_database.insert_process_fail(row_values=insert_process_fail_table)
+            self.target_database.insert_process_fail(row_values=element)

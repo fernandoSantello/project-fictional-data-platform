@@ -20,7 +20,7 @@ class DBMysql:
 
     def insert_process_fail_statement(self, row_values: dict) -> None:
         with self.conn_db as (conn_db, now):
-            sql = ('INSERT INTO process_fail (id_currency, error, timestamp) VALUES (%s, %s, %s)', (row_values['id_currency'], row_values['error'], now,))
+            sql = ('INSERT INTO process_fail (currency_name, error, timestamp) VALUES (%s, %s, %s)', (row_values['currency_name'], row_values['error'], now,))
             conn_db.insert_statement(sql=sql)
 
 
@@ -53,6 +53,14 @@ class DBMysql:
             'type': currency_data['type']
         }
         self.insert_currency_statement(row_values=row_values)
+
+    
+    def insert_process_fail(self, currency_data):
+        row_values = {
+            'currency_name': currency_data['name'],
+            'error': currency_data['error']
+        }
+        self.insert_process_fail_statement(row_values=row_values)
 
 
     def get_currency_table(self, postgres_last_id: int) -> list:
