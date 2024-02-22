@@ -15,6 +15,7 @@ The repository is organized into the following files and folders:
 - `/python/helper`: Utilizes the base functionalities provided by `/python/services` for more elaborate operations.
 - `/python/controller`: Program logic using helper classes and functions. The controller class is used for the DAG Pipeline logic.
 - `/python/exceptions`: Custom exceptions used through the project.
+- `/resources/images`: Images relating to the project. Architecure, Power BI Graphs, etc.
 - `docker-compose.yaml`: Configuration file for Docker architecture.
 
 ## Project Architecture
