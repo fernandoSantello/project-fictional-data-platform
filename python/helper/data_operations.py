@@ -36,7 +36,7 @@ def create_rate_column(new_column: str, value: int, rate_table_mysql: dict) -> p
     return rate_column
 
 
-def concatenate_dataframe(rates_data: dict, rate_table: list) -> dict:
+def generate_rate_table(rates_data: dict, rate_table: list) -> dict:
     brl_rate = filter_specific_rate(data=rates_data, currency='brl')
     eur_rate = filter_specific_rate(data=rates_data, currency='eur')
     ratebrl_column = create_rate_column(new_column='ratebrl', value=brl_rate, rate_table_mysql=rate_table)

@@ -40,7 +40,7 @@ class Controller:
                 self.source_database.insert_process_fail(error_data=data)
                 return
         rate_table = self.get_rate()
-        treated_rate_table = data_operations.concatenate_dataframe(rates_data=rates_data, rate_table=rate_table)
+        treated_rate_table = data_operations.generate_rate_table(rates_data=rates_data, rate_table=rate_table)
         return treated_rate_table
     
 
