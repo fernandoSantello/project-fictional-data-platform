@@ -30,14 +30,14 @@ class Controller:
         return rows
 
 
-    def concatenate_rate_column(self) -> dict:
+    def treat_rate_data(self) -> dict:
         try:
             rates_data = self.api_exchange_rate.get_rates()
         except (APIException, UnexpectedStatusCodeException) as ex:
                 data = {
                     'error': ex.message
                 }
-                self.source_database.insert_process_fail(data)
+                self.source_database.insert_process_fail(error_data=data)
                 return
         rate_table = self.get_rate()
         treated_rate_table = data_operations.concatenate_dataframe(rates_data=rates_data, rate_table=rate_table)
@@ -52,28 +52,29 @@ class Controller:
                 data = {
                     'error': ex.message
                 }
-                self.source_database.insert_process_fail(data)
+                self.source_database.insert_process_fail(error_data=data)
                 return
             try:
-                curency_exists = self.source_database.check_currency(currency_data['id'])
+                curency_exists = self.source_database.check_currency(currency=currency_data['id'])
                 if not curency_exists:
-                    self.source_database.insert_currency(currency_data)
-                self.source_database.insert_rate(currency_data)
+                    self.source_database.insert_currency(row_values=currency_data)
+                self.source_database.insert_rate(row_values=currency_data)
             except (DatabaseException, StatementException):
                 return
 
 
-    def gather_table_data(self, treat_data: bool) -> dict:
+    def gather_table_data_from_source(self, treat_data: bool) -> dict:
         try:
             insert_currency_table = self.get_currency()
             if treat_data:
-                insert_rate_table = self.concatenate_rate_column()
+                insert_rate_table = self.treat_rate_data()
             else:
                 insert_rate_table = self.get_rate()
             insert_process_fail_table = self.get_process_fail()
             return insert_currency_table, insert_rate_table, insert_process_fail_table
         except (DatabaseException, StatementException):
             return
+
 
     def insert_into_target_database(self, insert_currency_table: dict, insert_rate_table: dict, insert_process_fail_table: dict ) -> None:
         try:
@@ -85,3 +86,4 @@ class Controller:
                 self.target_database.insert_process_fail_statement(row_values=element)
         except (DatabaseException, StatementException):
             return
+        

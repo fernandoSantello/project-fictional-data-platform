@@ -55,9 +55,9 @@ class DBMysql:
         self.insert_currency_statement(row_values=row_values)
 
     
-    def insert_process_fail(self, currency_data):
+    def insert_process_fail(self, error_data):
         row_values = {
-            'error': currency_data['error']
+            'error': error_data['error']
         }
         self.insert_process_fail_statement(row_values=row_values)
 

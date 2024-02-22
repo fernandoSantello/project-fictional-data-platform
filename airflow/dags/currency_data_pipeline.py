@@ -81,7 +81,7 @@ def currency_data_pipeline():
 
     @task()
     def gather_data_for_local():
-        insert_currency_table, insert_rate_table, insert_process_fail_table = controler_local.gather_table_data(treat_data=True)
+        insert_currency_table, insert_rate_table, insert_process_fail_table = controler_local.gather_table_data_from_source(treat_data=True)
         tables = {
             'insert_currency_table': insert_currency_table,
             'insert_rate_table': insert_rate_table,
@@ -97,7 +97,7 @@ def currency_data_pipeline():
 
     @task()
     def gather_data_for_cloud():
-        insert_currency_table, insert_rate_table, insert_process_fail_table = controler_cloud.gather_table_data(treat_data=False)
+        insert_currency_table, insert_rate_table, insert_process_fail_table = controler_cloud.gather_table_data_from_source(treat_data=False)
         tables = {
             'insert_currency_table': insert_currency_table,
             'insert_rate_table': insert_rate_table,
