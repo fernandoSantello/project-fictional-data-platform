@@ -1,7 +1,7 @@
 from python.services.postgress_db import PostgresDBConnection
 
 class DBPostgres:
-    def __init__(self, conn_db: dict):
+    def __init__(self, conn_db: PostgresDBConnection):
         self.conn_db = conn_db
     
     def get_id_currency(self, currency: str) -> int:
@@ -66,6 +66,6 @@ class DBPostgres:
 
     def get_process_fail_table(self, postgres_last_id: int) -> list:
         with self.conn_db as (conn_db, now):
-            sql = ('SELECT id, currency_name, error, timestamp FROM process_fail WHERE id > %s', (postgres_last_id,))
+            sql = ('SELECT id, error, timestamp FROM process_fail WHERE id > %s', (postgres_last_id,))
             rows = conn_db.select_statement(sql=sql, fetch_single=False)
             return rows
