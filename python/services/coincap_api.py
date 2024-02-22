@@ -1,6 +1,6 @@
 import requests
 from requests.models import Response
-from libs.python.interfaces.api import API
+from python.interfaces.api import API
 
 class CoincapConnection(API):
     def __init__(self, conn_param: dict):

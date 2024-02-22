@@ -1,4 +1,4 @@
-from libs.python.services.exchange_rate_api import ExchangeRateConnection
+from python.services.exchange_rate_api import ExchangeRateConnection
 
 class ExchangeRateAPI:
     def __init__(self, conn_api: ExchangeRateConnection):

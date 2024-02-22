@@ -1,4 +1,4 @@
-from libs.python.services.mysql_db import MysqlDBConnection
+from python.services.mysql_db import MysqlDBConnection
 
 class DBMysql:
     def __init__(self, conn_db: MysqlDBConnection):

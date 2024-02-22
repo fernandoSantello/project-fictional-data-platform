@@ -1,4 +1,4 @@
-import libs.python.helper.data_operations as data_operations
+import python.helper.data_operations as data_operations
 
 class Controller:
     def __init__(self, api_rate, api_exchange_rate, source_database, target_database):

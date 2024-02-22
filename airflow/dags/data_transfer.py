@@ -3,15 +3,15 @@ from datetime import timedelta
 from airflow.utils.dates import days_ago
 from airflow.decorators import dag, task
 from dotenv import load_dotenv, find_dotenv
-from libs.python.controller.controller import Controller
-from libs.python.helper.coincap_api import CoincapAPI
-from libs.python.services.coincap_api import CoincapConnection
-from libs.python.helper.exchange_rate_api import ExchangeRateAPI
-from libs.python.services.exchange_rate_api import ExchangeRateConnection
-from libs.python.helper.mysql_db import DBMysql
-from libs.python.services.mysql_db import MysqlDBConnection
-from libs.python.helper.postgres_db import DBPostgres
-from libs.python.services.postgress_db import PostgresDBConnection
+from python.controller.controller import Controller
+from python.helper.coincap_api import CoincapAPI
+from python.services.coincap_api import CoincapConnection
+from python.helper.exchange_rate_api import ExchangeRateAPI
+from python.services.exchange_rate_api import ExchangeRateConnection
+from python.helper.mysql_db import DBMysql
+from python.services.mysql_db import MysqlDBConnection
+from python.helper.postgres_db import DBPostgres
+from python.services.postgress_db import PostgresDBConnection
 
 
 load_dotenv(find_dotenv())
@@ -54,7 +54,9 @@ rds_postgres_db = DBPostgres(conn_db=PostgresDBConnection(conn_param={
         }))
 
 
-controller = Controller(api_coincap=api_coincap, api_exchangerate=api_exchangerate, mysql_db=mysql_db, postgres_db=postgres_db, rds_postgres_db=rds_postgres_db)
+controller_1 = Controller(api_rate=api_coincap, api_exchange_rate=api_exchangerate, source_database=mysql_db, target_database=postgres_db)
+
+controller_2 = Controller(api_rate=api_coincap, api_exchange_rate=api_exchangerate, source_database=postgres_db, target_database=rds_postgres_db)
 
 
 default_args = {
@@ -69,18 +71,18 @@ default_args = {
 
 
 @dag(default_args=default_args, schedule_interval='0,30 * * * *', start_date=days_ago(0))
-def taskflow_api_etl():
+def currency_data_pipeline():
 
 
     @task()
     def extract_data():
-        controller.sync_currency_data()
+        controller_1.sync_currency_data()
         return True
     
 
     @task()
-    def transform_data(step):
-        insert_currency_table, insert_rate_table, insert_process_fail_table = controller.gather_table_data()
+    def gather_data_for_local(step):
+        insert_currency_table, insert_rate_table, insert_process_fail_table = controller_1.gather_table_data(treat_data=True)
         tables = {
             'insert_currency_table': insert_currency_table,
             'insert_rate_table': insert_rate_table,
@@ -90,12 +92,32 @@ def taskflow_api_etl():
     
 
     @task()
-    def load_data(tables):
-        controller.insert_into_postgres(tables['insert_currency_table'], tables['insert_rate_table'], tables['insert_process_fail_table'])
+    def load_data_to_local(tables):
+        controller_1.insert_into_target_database(tables['insert_currency_table'], tables['insert_rate_table'], tables['insert_process_fail_table'])
+        return True
+
+
+    @task()
+    def gather_data_for_cloud(step):
+        insert_currency_table, insert_rate_table, insert_process_fail_table = controller_2.gather_table_data(treat_data=False)
+        tables = {
+            'insert_currency_table': insert_currency_table,
+            'insert_rate_table': insert_rate_table,
+            'insert_process_fail_table': insert_process_fail_table
+        }
+        return tables
+    
+    
+    @task()
+    def load_data_to_cloud(tables):
+        controller_2.insert_into_target_database(tables['insert_currency_table'], tables['insert_rate_table'], tables['insert_process_fail_table'])
+
 
     step_1 = extract_data()
-    tables = transform_data(step=step_1)
-    load_data(tables=tables)
+    tables = gather_data_for_local(step=step_1)
+    step_2 = load_data_to_local(tables=tables)
+    tables = gather_data_for_cloud(step=step_2)
+    load_data_to_cloud(tables)
 
 
-etl_dag = taskflow_api_etl()
+currency_data_pipeline = currency_data_pipeline()

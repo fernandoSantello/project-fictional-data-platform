@@ -1,4 +1,4 @@
-from libs.python.services.postgress_db import PostgresDBConnection
+from python.services.postgress_db import PostgresDBConnection
 
 class DBPostgres:
     def __init__(self, conn_db: dict):

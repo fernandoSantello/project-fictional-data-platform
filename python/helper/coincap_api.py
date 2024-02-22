@@ -1,4 +1,4 @@
-from libs.python.services.coincap_api import CoincapConnection
+from python.services.coincap_api import CoincapConnection
 
 class CoincapAPI:
     def __init__(self, conn_api: CoincapConnection):
