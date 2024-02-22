@@ -8,20 +8,17 @@ from psycopg2.errors import ProgrammingError, DatabaseError
 
 class PostgresDBConnection(Database):
     def __init__(self, conn_param: dict):
-        self.user = conn_param['user']
-        self.password = conn_param['password']
-        self.host = conn_param['host']
-        self.database = conn_param['database']
+        self.conn_param = conn_param
         self.conn = None
         self.cursor = None
 
 
     def __enter__(self):
         self.conn = psycopg2.connect(
-        user=self.user,
-        password=self.password,
-        host=self.host,
-        dbname=self.database
+        user=self.conn_param['user'],
+        password=self.conn_param['password'],
+        host=self.conn_param['host'],
+        dbname=self.conn_param['database']
         )
         self.cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         now = dt.now().strftime('%Y-%m-%d %H:%M:%S')      

@@ -7,19 +7,16 @@ from mysql.connector.errors import ProgrammingError, DatabaseError
 
 class MysqlDBConnection(Database):
     def __init__(self, conn_param: dict):
-        self.user = conn_param['user']
-        self.password = conn_param['password']
-        self.host = conn_param['host']
-        self.database = conn_param['database']
+        self.conn_param = conn_param
         self.conn = None
         self.cursor = None
 
 
     def __enter__(self):
-        self.conn = mysql.connector.connect(user=self.user, 
-                                    password=self.password,
-                                    host=self.host,
-                                    database=self.database)
+        self.conn = mysql.connector.connect(user=self.conn_param['user'], 
+                                    password=self.conn_param['password'],
+                                    host=self.conn_param['host'],
+                                    database=self.conn_param['database'])
         self.cursor = self.conn.cursor(dictionary=True)
         now = dt.now().strftime('%Y-%m-%d %H:%M:%S')      
         return self, now
