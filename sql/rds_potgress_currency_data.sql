@@ -25,7 +25,6 @@ CREATE TABLE rate (
 
 CREATE TABLE process_fail (
 	id INT NOT NULL PRIMARY KEY,
-    currency_name VARCHAR(20) NOT NULL,
     error VARCHAR(50) NOT NULL,
     timestamp VARCHAR(50) NOT NULL
 );
