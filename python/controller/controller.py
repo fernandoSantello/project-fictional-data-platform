@@ -30,7 +30,14 @@ class Controller:
 
 
     def concatenate_rate_column(self) -> dict:
-        rates_data = self.api_exchange_rate.get_rates()
+        try:
+            rates_data = self.api_exchange_rate.get_rates()
+        except (APIException, UnexpectedStatusCodeException) as ex:
+                data = {
+                    'error': ex.message
+                }
+                self.source_database.insert_process_fail(data)
+                return
         rate_table = self.get_rate()
         treated_rate_table = data_operations.concatenate_dataframe(rates_data=rates_data, rate_table=rate_table)
         return treated_rate_table
@@ -45,6 +52,7 @@ class Controller:
                     'error': ex.message
                 }
                 self.source_database.insert_process_fail(data)
+                return
             curency_exists = self.source_database.check_currency(currency_data['id'])
             if not curency_exists:
                 self.source_database.insert_currency(currency_data)
