@@ -14,19 +14,19 @@ class Controller:
     
     def get_rate(self) -> list:
         source_last_id = self.target_database.get_last_id_rate()
-        rows = self.source_database.get_rate_table(postgres_last_id=source_last_id)
+        rows = self.source_database.get_rate_table(target_last_id=source_last_id)
         return rows
     
 
     def get_currency(self) -> list:
         source_last_id = self.target_database.get_last_id_currency()
-        rows = self.source_database.get_currency_table(postgres_last_id=source_last_id)
+        rows = self.source_database.get_currency_table(target_last_id=source_last_id)
         return rows
     
     
     def get_process_fail(self) -> list:
         source_last_id = self.target_database.get_last_id_process_fail()
-        rows = self.source_database.get_process_fail_table(postgres_last_id=source_last_id)
+        rows = self.source_database.get_process_fail_table(target_last_id=source_last_id)
         return rows
 
 
@@ -78,10 +78,10 @@ class Controller:
     def insert_into_target_database(self, insert_currency_table: dict, insert_rate_table: dict, insert_process_fail_table: dict ) -> None:
         try:
             for element in insert_currency_table:
-                self.target_database.insert_currency(row_values=element)
+                self.target_database.insert_currency_statement(row_values=element)
             for element in insert_rate_table:
-                self.target_database.insert_rate(row_values=element)
+                self.target_database.insert_rate_statement(row_values=element)
             for element in insert_process_fail_table:
-                self.target_database.insert_process_fail(row_values=element)
+                self.target_database.insert_process_fail_statement(row_values=element)
         except (DatabaseException, StatementException):
             return

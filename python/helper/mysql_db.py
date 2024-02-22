@@ -18,12 +18,6 @@ class DBMysql:
             return bool(row)
 
 
-    def insert_process_fail_statement(self, row_values: dict) -> None:
-        with self.conn_db as (conn_db, now):
-            sql = ('INSERT INTO process_fail (error, timestamp) VALUES (%s, %s)', (row_values['error'], now,))
-            conn_db.insert_statement(sql=sql)
-
-
     def insert_currency_statement(self, row_values: dict) -> None:
         with self.conn_db as (conn_db, now):
             sql = ('INSERT INTO currency (name, symbol, currencysymbol, type, createdAt) VALUES (%s, %s, %s, %s, %s)', (row_values['name'], row_values['symbol'], row_values['currencysymbol'], row_values['type'] , now,))
@@ -33,6 +27,12 @@ class DBMysql:
     def insert_rate_statement(self, row_values: dict) -> None:
         with self.conn_db as (conn_db, now):
             sql = ('INSERT INTO rate (id_currency, rateusd, timestamp) VALUES (%s, %s, %s)', (row_values['id_currency'], row_values['rateusd'], now,))
+            conn_db.insert_statement(sql=sql)
+
+    
+    def insert_process_fail_statement(self, row_values: dict) -> None:
+        with self.conn_db as (conn_db, now):
+            sql = ('INSERT INTO process_fail (error, timestamp) VALUES (%s, %s)', (row_values['error'], now,))
             conn_db.insert_statement(sql=sql)
 
     
@@ -62,23 +62,23 @@ class DBMysql:
         self.insert_process_fail_statement(row_values=row_values)
 
 
-    def get_currency_table(self, postgres_last_id: int) -> list:
+    def get_currency_table(self, target_last_id: int) -> list:
         with self.conn_db as (conn_db, now):
-            sql = ('SELECT id, name, symbol, currencysymbol, type, createdAt FROM currency WHERE id > %s', (postgres_last_id,))
+            sql = ('SELECT id, name, symbol, currencysymbol, type, createdAt FROM currency WHERE id > %s', (target_last_id,))
             rows = conn_db.select_statement(sql=sql, fetch_single=False)
             return rows
     
 
-    def get_rate_table(self, postgres_last_id: int) -> list:
+    def get_rate_table(self, target_last_id: int) -> list:
         with self.conn_db as (conn_db, now):
-            sql = ('SELECT id, id_currency, rateusd, timestamp FROM rate WHERE id > %s',(postgres_last_id,))
+            sql = ('SELECT id, id_currency, rateusd, timestamp FROM rate WHERE id > %s',(target_last_id,))
             rows = conn_db.select_statement(sql=sql, fetch_single=False)
             return rows
 
 
-    def get_process_fail_table(self, postgres_last_id: int) -> list:
+    def get_process_fail_table(self, target_last_id: int) -> list:
         with self.conn_db as (conn_db, now):
-            sql = ('SELECT id, error, timestamp FROM process_fail WHERE id > %s', (postgres_last_id,))
+            sql = ('SELECT id, error, timestamp FROM process_fail WHERE id > %s', (target_last_id,))
             rows = conn_db.select_statement(sql=sql, fetch_single=False)
             return rows
     

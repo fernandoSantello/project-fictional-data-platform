@@ -11,21 +11,21 @@ class DBPostgres:
             return row['id']
 
 
-    def insert_process_fail(self, row_values: dict) -> None:
-        with self.conn_db as (conn_db, now):
-            sql = ('INSERT INTO process_fail (id, error, timestamp) VALUES (%s, %s, %s)', (row_values['id'], row_values['error'], now,))
-            conn_db.insert_statement(sql=sql)
-
-
-    def insert_currency(self, row_values: dict) -> None:
+    def insert_currency_statement(self, row_values: dict) -> None:
         with self.conn_db as (conn_db, now):
             sql = ('INSERT INTO currency (id, name, symbol, currencysymbol, type, createdAt) VALUES (%s, %s, %s, %s, %s, %s)', (row_values['id'], row_values['name'], row_values['symbol'], row_values['currencysymbol'], row_values['type'] , now,))
             conn_db.insert_statement(sql=sql)
 
 
-    def insert_rate(self, row_values: dict) -> None:
+    def insert_rate_statement(self, row_values: dict) -> None:
         with self.conn_db as (conn_db, now):
             sql = ('INSERT INTO rate (id, id_currency, rateusd, ratebrl, rateeur, timestamp) VALUES (%s, %s, %s, %s, %s, %s)', (row_values['id'], row_values['id_currency'], row_values['rateusd'], row_values['ratebrl'], row_values['rateeur'], now,))
+            conn_db.insert_statement(sql=sql)
+
+
+    def insert_process_fail_statement(self, row_values: dict) -> None:
+        with self.conn_db as (conn_db, now):
+            sql = ('INSERT INTO process_fail (id, error, timestamp) VALUES (%s, %s, %s)', (row_values['id'], row_values['error'], now,))
             conn_db.insert_statement(sql=sql)
 
     
@@ -50,22 +50,22 @@ class DBPostgres:
             return 0 if row == None else row['id']
         
     
-    def get_currency_table(self, postgres_last_id: int) -> list:
+    def get_currency_table(self, target_last_id: int) -> list:
         with self.conn_db as (conn_db, now):
-            sql = ('SELECT id, name, symbol, currencysymbol, type, createdAt FROM currency WHERE id > %s', (postgres_last_id,))
+            sql = ('SELECT id, name, symbol, currencysymbol, type, createdAt FROM currency WHERE id > %s', (target_last_id,))
             rows = conn_db.select_statement(sql=sql, fetch_single=False)
             return rows
         
 
-    def get_rate_table(self, postgres_last_id: int) -> list:
+    def get_rate_table(self, target_last_id: int) -> list:
         with self.conn_db as (conn_db, now):
-            sql = ('SELECT id, id_currency, rateusd, ratebrl, rateeur, timestamp FROM rate WHERE id > %s',(postgres_last_id,))
+            sql = ('SELECT id, id_currency, rateusd, ratebrl, rateeur, timestamp FROM rate WHERE id > %s',(target_last_id,))
             rows = conn_db.select_statement(sql=sql, fetch_single=False)
             return rows
         
 
-    def get_process_fail_table(self, postgres_last_id: int) -> list:
+    def get_process_fail_table(self, target_last_id: int) -> list:
         with self.conn_db as (conn_db, now):
-            sql = ('SELECT id, error, timestamp FROM process_fail WHERE id > %s', (postgres_last_id,))
+            sql = ('SELECT id, error, timestamp FROM process_fail WHERE id > %s', (target_last_id,))
             rows = conn_db.select_statement(sql=sql, fetch_single=False)
             return rows
