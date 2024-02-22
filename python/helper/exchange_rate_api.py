@@ -1,5 +1,6 @@
 from python.services.exchange_rate_api import ExchangeRateConnection
 from python.exceptions.api import APIException, UnexpectedStatusCodeException
+from requests.exceptions import RequestException
 
 
 class ExchangeRateAPI:
@@ -16,5 +17,5 @@ class ExchangeRateAPI:
                 return data
             else: 
                 raise UnexpectedStatusCodeException(message='Status code from Exchange Rate API was unexpected')
-        except:
+        except RequestException:
             raise APIException(message='Failed to communicate with Exchange Rate API')

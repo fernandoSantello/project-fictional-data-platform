@@ -1,4 +1,6 @@
 import python.helper.data_operations as data_operations
+from python.exceptions.api import APIException, UnexpectedStatusCodeException
+
 
 class Controller:
     def __init__(self, api_rate, api_exchange_rate, source_database, target_database):
@@ -36,7 +38,14 @@ class Controller:
 
     def sync_currency_data(self) -> None:
         for element in self.currencies:
-            currency_data = self.api_rate.get_rates(currency=element)
+            try:
+                currency_data = self.api_rate.get_rates(currency=element)
+            except (APIException, UnexpectedStatusCodeException) as ex:
+                data = {
+                    'name': element,
+                    'error': ex.message
+                }
+                self.source_database.insert_process_fail(data)
             curency_exists = self.source_database.check_currency(currency_data['id'])
             if not curency_exists:
                 self.source_database.insert_currency(currency_data)
