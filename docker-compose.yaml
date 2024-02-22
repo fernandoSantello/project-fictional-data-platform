@@ -200,6 +200,7 @@ services:
       - bash
       - -c
       - airflow
+
   mysql:
     image: mysql:latest
     container_name: mysql-container
@@ -247,7 +248,6 @@ services:
     ports:
       - "15311:80"
     depends_on:
-      - postgres-prod
       - postgres-staging
 
 volumes:
