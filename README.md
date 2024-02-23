@@ -1,6 +1,8 @@
 # Project Overview
 
-...
+This project encompasses the journey of raw data, from ingestion into a database, through treatment, to loading into both local and cloud-based warehouses, ending in the extraction of insights through ML and BI. The orchestration of tasks is made using Airflow's TaskFlow features, ensuring a robust pipeline. Airflow, the ingestion database, and the local warehouse are all encapsulated within containers, facilitating seamless implementation and deployment.
+
+It's important to note that the essence of this project is not the data itself, but the architecture of the infrastructure and the pipeline. The pipeline is designed to enable smooth data transit between components, minimizing the risk of errors. Furthermore, the interfaces, services and helpers are designed with reusability in mind, allowing for easy adaptation to different contexts. This flexibility ensures that the infrastructure can accommodate various databases and workflows, needing only to implement the new logic.
 
 ## Project Structure
 
@@ -49,15 +51,22 @@ This project uses the following technologies:
 
 To get a local copy up and running, follow the following steps:
 
-1. Clone the repo
+1. Clone the repository:
    ```sh
    git clone https://github.com/fernandoSantello/project-fictional-data-platform
    ```
 2. Navigate to the project directory.
-3. Set up your own .env file
-4. Build custom Airflow image using the Dockerfile at `/airflow`. The custom name and tag are `apache-airflow` and `fictional-data-platform` respectively.
-5. Create the Docker Architecure using `docker-compose.yaml` at root.
+3. Set up your own .env file.
+4. Build custom Airflow image using the Dockerfile at `/airflow`. The custom name and tag are `apache-airflow` and `fictional-data-platform` respectively:
+   ```sh
+   docker build -t <fictional-data-platform> <path_to_dockerfile_directory>
+   ```
+5. Create the Docker Architecure using `docker-compose.yaml` at root:
+   ```sh
+   docker-compose up
+   ```
 6. Access and use pgAdmin, phpMyAdmin and Airflow Webserver to explore the project.
+7. NOTE: For the Cloud Warehouse, you will need an working AWS account and a RDS instance. If don't want to implement the cloud steps, you can delete "gather_data_for_cloud" and "load_data_to_cloud" tasks in the pipeline.
 
 ## License
 
