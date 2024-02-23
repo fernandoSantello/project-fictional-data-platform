@@ -20,6 +20,10 @@ The repository is organized into the following files and folders:
 - `/resources/images`: Images relating to the project. Architecure, Power BI Graphs, etc.
 - `docker-compose.yaml`: Configuration file for Docker architecture.
 
+## Pipeline Structure
+
+Airflow calls a taks that fetches data from a external API. This data contains information about crypto currencies. This raw data is loaded into the ingestion database. The data is then fetched and treated using Pandas. After the data is properlly treated, it's loaded into the Local Warehouse. After that, the data in syncronized in a Cloud Warehouse.
+
 ## Project Architecture
 
 The following diagram represents the architecture of this project:
